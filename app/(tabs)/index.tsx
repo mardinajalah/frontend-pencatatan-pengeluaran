@@ -1,75 +1,89 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { saldo, transaction } from '@/assets/data';
+import CardTransaction from '@/components/CardTransaction';
+import CardView from '@/components/CardView';
+import TransactionView from '@/components/TransactionView';
+import { BanknoteArrowDown, BanknoteArrowUp, Search } from 'lucide-react-native';
+import { ScrollView, Text, TextInput, View } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
+export default function Index() {
+  const formatMoney = (money: number): string => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(money);
+  };
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View className='bg-white flex-1 px-3'>
+      <View className='mt-5'>
+        <Text className='font-semibold text-gray-700'>Dompet</Text>
+        <Text className='text-2xl font-bold text-gray-700'>Rp 292.000</Text>
+      </View>
+      {/* start cardView */}
+      <View className='mt-10 flex-row gap-3'>
+        {saldo.map((item, i) => (
+          <CardView
+            key={i}
+            title={item.title}
+            uang={formatMoney(item.money)}
+          />
+        ))}
+      </View>
+      {/* end cardView */}
+      <View className='mt-10 flex-1 mb-24'>
+        <Text className='text-lg font-semibold text-gray-700'>Transaksi</Text>
+        {/* satrt Search */}
+        <View className='flex-row items-center border border-gray-600 rounded-xl px-3 mt-2'>
+          <TextInput
+            placeholder='cari...'
+            className='flex-1 py-3'
+            placeholderTextColor='#888'
+          />
+          <Search
+            size={20}
+            color='#555'
+          />
+        </View>
+        {/* end search */}
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          className='mt-4'
+        >
+          <View className='p-4'>
+            {transaction.map((item, i) => (
+              <TransactionView
+                key={i}
+                hari={item.day}
+                total={`- ${formatMoney(item.total)}`}
+              >
+                {item.data.map((result, i) => (
+                  <CardTransaction
+                    key={i}
+                    kategori={result.category}
+                    deskripsi={result.description}
+                    harga={result.category === 'Kiriman' ? `+ ${formatMoney(result.price)}` : `- ${formatMoney(result.price)}`}
+                    jam={result.time}
+                    color={result.category === 'Kiriman' ? 'text-green-700' : 'text-red-700'}
+                  >
+                    {result.category === 'Kiriman' ? (
+                      <BanknoteArrowDown
+                        size={50}
+                        color='#555'
+                      />
+                    ) : (
+                      <BanknoteArrowUp
+                        size={50}
+                        color='#555'
+                      />
+                    )}
+                  </CardTransaction>
+                ))}
+              </TransactionView>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
