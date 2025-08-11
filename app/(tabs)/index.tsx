@@ -33,7 +33,7 @@ export default function Index() {
       <View className='mt-10 flex-1 mb-24'>
         <Text className='text-lg font-semibold text-gray-700'>Transaksi</Text>
         {/* satrt Search */}
-        <View className='flex-row items-center border border-gray-600 rounded-xl px-3 mt-2'>
+        <View className='flex-row items-center border border-gray-300 rounded-xl px-3 mt-2'>
           <TextInput
             placeholder='cari...'
             className='flex-1 py-3'

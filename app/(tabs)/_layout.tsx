@@ -43,7 +43,7 @@ const TabsLayout = () => {
         name='addTrasaction'
         options={{
           tabBarIcon: ({ size }) => (
-            <View className='bg-blue-500 p-3 rounded-full'>
+            <View className='bg-violet-600 p-3 rounded-full'>
               <Plus
                 color='#fff'
                 size={size}
