@@ -1,14 +1,19 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import InputComponent from './InputComponent';
 import DropDown from './DropDown';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ButtonSwich from './ButtonSwich';
 
 const AddTransactionView = () => {
-  const itemsCategory = ['Kiriman', 'Makanan', 'Minum', 'Transportasi', 'Kesehatan', 'Lainnya'];
+  const [itemsCategory, setItemsCategory] = useState<string[]>([]);
   const [type, setType] = useState<'Pemasukan' | 'Pengeluaran'>('Pengeluaran');
+
+  useEffect(() => {
+    type === "Pemasukan" ? setItemsCategory(["Kiriman"]):setItemsCategory(['Makanan', 'Minum', 'Transportasi', 'Kesehatan', 'Lainnya'])
+  }, [type]);
+
   return (
-    <View>
+    <View> 
       <ButtonSwich type={type} onChange={setType} />
       <View className='flex gap-2'>
         <DropDown title='kategori' items={itemsCategory} />

@@ -3,9 +3,13 @@ import CardTransaction from '@/components/CardTransaction';
 import CardView from '@/components/CardView';
 import TransactionView from '@/components/TransactionView';
 import { BanknoteArrowDown, BanknoteArrowUp, Search } from 'lucide-react-native';
+import { useMemo, useState } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 
 export default function Index() {
+  const [dataTransaction] = useState(transaction);
+  const [search, setSearch] = useState(''); // 🔹 state untuk input search
+
   const formatMoney = (money: number): string => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -13,6 +17,19 @@ export default function Index() {
       minimumFractionDigits: 0,
     }).format(money);
   };
+
+  // 🔹 Filter data berdasarkan search
+  const filteredDataTransaction = useMemo(() => {
+    if (!search) return dataTransaction;
+
+    return dataTransaction
+      .map((trx) => ({
+        ...trx,
+        data: trx.data.filter((item) => item.category.toLowerCase().includes(search.toLowerCase()) || item.description.toLowerCase().includes(search.toLowerCase())),
+      }))
+      .filter((trx) => trx.data.length > 0); // hapus transaksi kosong
+  }, [search, dataTransaction]);
+
   return (
     <View className='bg-white flex-1 px-3'>
       <View className='mt-5'>
@@ -32,10 +49,12 @@ export default function Index() {
       {/* end cardView */}
       <View className='mt-10 flex-1 mb-24'>
         <Text className='text-lg font-semibold text-gray-700'>Transaksi</Text>
-        {/* satrt Search */}
+        {/* start Search */}
         <View className='flex-row items-center border border-gray-300 rounded-xl px-3 mt-2'>
           <TextInput
             placeholder='cari...'
+            value={search}
+            onChangeText={setSearch} // 🔹 update state saat user ketik
             className='flex-1 py-3'
             placeholderTextColor='#888'
           />
@@ -51,7 +70,7 @@ export default function Index() {
           className='mt-4'
         >
           <View className='p-4'>
-            {transaction.map((item, i) => (
+            {filteredDataTransaction.map((item, i) => (
               <TransactionView
                 key={i}
                 hari={item.day}
